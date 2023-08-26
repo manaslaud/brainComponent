@@ -9,38 +9,74 @@ const path = data.economics[0].paths;
 const clock = new THREE.Clock();
 console.log(path)
 
-function oneCurve(curve){
+function oneCurve(curve,index){
   const ColorShiftMaterial = shaderMaterial(
     {
       time: 0,
-      color: new THREE.Color(0, 0.1, 0.7)
+      color: new THREE.Color(0.1, 0.3, 0.9)
     },
     // vertex shader
     `
+    uniform float time;
     varying vec2 vUv;
+    varying float vProgress;
+   
     void main() {
       vUv=uv;
-    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-  
-    vec4 viewPosition = viewMatrix * modelPosition;
-    vec4 projectedPosition = projectionMatrix * viewPosition;
-  
-    gl_Position = projectedPosition;
+      vProgress=smoothstep(-1.,1.,sin(vUv.x*8. + time*3.8));
+      gl_Position=projectionMatrix *modelViewMatrix *vec4(position,1.0);
   }
     `,
     // fragment shader
     `
+    float gamma = 1.7;
     uniform float time;
+    varying float vProgress;
     uniform vec3 color;
     varying vec2 vUv;
+    vec3 simpleReinhardToneMapping(vec3 color)
+  {
+	float exposure = 1.5;
+	color *= exposure/(1. + color / exposure);
+	color = pow(color, vec3(1. / gamma));
+	return color;
+  }
+  vec3 whitePreservingLumaBasedReinhardToneMapping(vec3 color)
+{
+	float white = 2.;
+	float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+	float toneMappedLuma = luma * (1. + luma / (white*white)) / (1. + luma);
+	color *= toneMappedLuma / luma;
+	color = pow(color, vec3(1. / gamma));
+	return color;
+}
+vec3 filmicToneMapping(vec3 color)
+{
+	color = max(vec3(0.), color - vec3(0.004));
+	color = (color * (6.2 * color + .5)) / (color * (6.2 * color + 1.7) + 0.06);
+	return color;
+}
+vec3 RomBinDaHouseToneMapping(vec3 color)
+{
+    color = exp( -1.0 / ( 2.72*color + 0.15 ) );
+	color = pow(color, vec3(1. / gamma));
+	return color;
+}
+
     void main() {
-      float normalizedSin = 0.5 + 0.5 * sin(time);
-    
-      vec3 modifiedColor = color * normalizedSin;
-    
-      gl_FragColor = vec4(vUv.x*normalizedSin, vUv.y* normalizedSin,1.0, 1.0);   
+      float normalSine= 0.5 + 0.5*sin(time);
+      float hidecorners=smoothstep(1.,.9,vUv.x);
+      float hidecorners1=smoothstep(0.,.9,vUv.x);
+      //for neon effect change color1 green param
+      vec3 color1 =vec3(.5,0.06,0.5);
+      vec3 color2 =vec3(6.,0.1,0.03*normalSine);
+      //white intensity controll using green param
+      vec3 finalColor =mix(color1*0.35,color2,vProgress);
+      vec3 finalColor1=whitePreservingLumaBasedReinhardToneMapping(finalColor);
+      gl_FragColor.brga =vec4(finalColor1,hidecorners*hidecorners1) ;   
     
     }
+
     `
   );
   
@@ -53,11 +89,15 @@ function oneCurve(curve){
   
   extend({ ColorShiftMaterial });
   return (
-    <mesh >
-      <tubeGeometry args={[curve, 64, 0.001, 8, false]} wireframe={true}/>
+    <mesh key={index}>
+      <tubeGeometry args={[curve, 3400, 0.001, 8, false]} wireframe={true}/>
       <colorShiftMaterial
-        // side={THREE.DoubleSide}
+        side={THREE.DoubleSide}
+        depthTest={false}
+        depthWrite={false}
+        transparent={false}
         ref={materialRef}
+        blending={THREE.AdditiveBlending}
       />
     </mesh>
   );
@@ -84,8 +124,8 @@ export default function Brain() {
   
   return (
     <>
-    { curves.map((curve)=>{
-      return (oneCurve(curve))
+    { curves.map((curve,index)=>{
+      return (oneCurve(curve,index))
     })}
     </>
   );
