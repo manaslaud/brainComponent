@@ -13,7 +13,10 @@ export default function App (){
             <Canvas camera={{position:[.3,.3,.3]}}>
             <ambientLight/>
             <OrbitControls/>
+            <>
             <Brain/>
+            </>
+            
         </Canvas>
         </div>
         
