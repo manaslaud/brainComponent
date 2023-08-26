@@ -7,29 +7,40 @@ import { useFrame } from "@react-three/fiber";
 
 const path = data.economics[0].paths;
 const clock = new THREE.Clock();
-console.log(path)
 
 function oneCurve(curve,index){
   const ColorShiftMaterial = shaderMaterial(
     {
       time: 0,
-      color: new THREE.Color(0.1, 0.3, 0.9)
+      color: new THREE.Color(0.1, 0.3, 0.9),
+      mouse_v: new THREE.Vector3(0,0,0)
     },
     // vertex shader
     `
     uniform float time;
     varying vec2 vUv;
     varying float vProgress;
-   
+    uniform vec3 mouse_v;
+
     void main() {
       vUv=uv;
+      vec3 p=position;
+      float maxDist=0.05;
+      float dist=length(mouse_v-p);
+    
+      if(dist<maxDist){
+        vec3 distortion=0.5* normalize(mouse_v-p);
+        distortion*= (1.-dist/maxDist);
+        p-=distortion*0.03;
+      }
       vProgress=smoothstep(-1.,1.,sin(vUv.x*8. + time*3.8));
-      gl_Position=projectionMatrix *modelViewMatrix *vec4(position,1.0);
+      gl_Position=projectionMatrix *modelViewMatrix *vec4(p,1.0);
+
   }
     `,
     // fragment shader
     `
-    float gamma = 1.7;
+    float gamma = 2.1;
     uniform float time;
     varying float vProgress;
     uniform vec3 color;
@@ -68,7 +79,7 @@ vec3 RomBinDaHouseToneMapping(vec3 color)
       float hidecorners=smoothstep(1.,.9,vUv.x);
       float hidecorners1=smoothstep(0.,.9,vUv.x);
       //for neon effect change color1 green param
-      vec3 color1 =vec3(.5,0.06,0.5);
+      vec3 color1 =vec3(.5,0.06,0.35);
       vec3 color2 =vec3(6.,0.1,0.03*normalSine);
       //white intensity controll using green param
       vec3 finalColor =mix(color1*0.35,color2,vProgress);
@@ -81,10 +92,14 @@ vec3 RomBinDaHouseToneMapping(vec3 color)
   );
   
   const materialRef = useRef();
-  useFrame(() => {
+  useFrame(({mouse,viewport}) => {
     let time = clock.getElapsedTime();
     materialRef.current.uniforms.time.value = time;
-    // console.log(materialRef.current.uniforms.time.value)
+    materialRef.current.uniforms.mouse_v.value=new THREE.Vector3(
+      mouse.x *viewport.width/2,
+      mouse.y *viewport.height/2,
+      0)
+      // console.log(materialRef.current.uniforms.mouse_v.value)
   });
   
   extend({ ColorShiftMaterial });
@@ -119,7 +134,6 @@ export default function Brain() {
    
     curves.push(curve);
   }
-  console.log(curves)
 
   
   return (
