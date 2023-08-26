@@ -108,7 +108,7 @@ vec3 RomBinDaHouseToneMapping(vec3 color)
       <tubeGeometry args={[curve, 3400, 0.001, 8, false]} wireframe={true}/>
       <colorShiftMaterial
         side={THREE.DoubleSide}
-        depthTest={false}
+        depthTest={true}
         depthWrite={false}
         transparent={false}
         ref={materialRef}
