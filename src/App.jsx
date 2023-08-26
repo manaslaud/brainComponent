@@ -10,7 +10,7 @@ export default function App (){
    
     return(
         <div className="w-full h-screen bg-black">
-            <Canvas camera={{position:[.3,.3,.3],near:0.001}}>
+            <Canvas camera={{position:[.2,.04,0.2],near:0.0001}}>
             <ambientLight/>
             <OrbitControls/>
             <>

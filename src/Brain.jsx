@@ -25,7 +25,7 @@ function oneCurve(curve,index){
     void main() {
       vUv=uv;
       vec3 p=position;
-      float maxDist=0.05;
+      float maxDist=0.07;
       float dist=length(mouse_v-p);
     
       if(dist<maxDist){
