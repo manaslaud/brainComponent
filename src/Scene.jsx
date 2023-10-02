@@ -48,9 +48,9 @@ console.log(ref)
     
     extend({ GridShaderMaterial });
     return (
-      <mesh key={Math.random()} position={[x,y,z]} ref={ref} material={GridShaderMaterial}>
+      <mesh key={Math.random()} position={[x,y,z]} ref={ref} >
         <boxGeometry args={[1, 1, 1]} />
-       
+       <meshMatcapMaterial matcap={texture}/>
       </mesh>
     );
   };

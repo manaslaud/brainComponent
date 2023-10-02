@@ -20,7 +20,6 @@ export default function App (){
     return(
         <div className="w-full h-screen bg-black">
             <Canvas  orthographic  camera={{position:[8,12,16] ,cameraProps, zoom:190}} style={{background:'black'}}>
-            <ambientLight itensity={1} />
             <OrbitControls/>
             <Scene/>
             
