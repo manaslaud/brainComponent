@@ -1,10 +1,23 @@
 import { OrbitControls } from "@react-three/drei"
 import { Canvas } from "@react-three/fiber"
-import Scene from "./Scene"
+import Abstract from "./Abstract"
+import { useThree } from "@react-three/fiber"
+import { useEffect } from "react"
+import { Bloom,  EffectComposer  } from '@react-three/postprocessing'
+import { SMAA, FXAA } from "@react-three/postprocessing";
 
 
 
 export default function App (){
+
+    function AdaptivePixelRatio() {
+        const current = useThree((state) => state.performance.current)
+        const setPixelRatio = useThree((state) => state.setDpr)
+        useEffect(() => {
+          setPixelRatio(window.devicePixelRatio * current)
+        }, [current])
+        return null
+    }      
    let frustumsize =4
    const aspect = window.innerWidth / window.innerHeight;
 
@@ -19,10 +32,19 @@ export default function App (){
 
     return(
         <div className="w-full h-screen bg-black">
-            <Canvas  orthographic  camera={{position:[8,12,16] ,cameraProps, zoom:190}} style={{background:'black'}}>
+            <Canvas gl={{antialiasing:true}}  camera={{position:[8,12,16] ,cameraProps, zoom:10}}  >
             <OrbitControls/>
-            <Scene/>
-            
+        <Abstract/>
+        <EffectComposer>
+        <FXAA
+            consoleWarn={false} // Set this to true if you want to see warnings in the console
+            edgeThreshold={0.125} // Adjust the edge threshold as needed
+            edgeThresholdMin={0.04} // Adjust the minimum edge threshold as needed
+          />
+        <Bloom luminanceThreshold={0} luminanceSmoothing={0.2} height={300} />
+       
+      </EffectComposer>
+<AdaptivePixelRatio/>
         </Canvas>
         </div>
         

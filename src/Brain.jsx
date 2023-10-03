@@ -99,7 +99,6 @@ vec3 RomBinDaHouseToneMapping(vec3 color)
       mouse.x *viewport.width/2,
       mouse.y *viewport.height/2,
       0)
-      // console.log(materialRef.current.uniforms.mouse_v.value)
   });
   
   extend({ ColorShiftMaterial });
