@@ -2,10 +2,8 @@ import React, { useRef } from "react";
 import { extend, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-import { shaderMaterial } from "@react-three/drei";
 
-const textureloader= new THREE.TextureLoader();
-  const texture= textureloader.load('sec4.png')
+
 
 
 const Abstract = () => {
@@ -15,12 +13,14 @@ console.log(ref)
 useFrame(({clock})=>{
     time=clock.getElapsedTime()
     ref.current.material.uniforms.time.value=time;
+    ref.current.rotation.z=Math.sin(time)/4 +time/20 +5
+    ref.current.rotation.y=Math.cos(time)/4 +time/20 +5
   })
 
   
   const GridShaderMaterial = new THREE.ShaderMaterial({
     
-    side:THREE.DoubleSide,
+
     uniforms: {
         time:{value:0}
     },

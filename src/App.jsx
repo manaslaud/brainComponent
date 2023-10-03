@@ -26,13 +26,13 @@ export default function App (){
     right: aspect*frustumsize/2,
     top: 2,
     bottom: -2,
-    near: -1000,
+    near: 0.1,
     far: 1000,
   };
 
     return(
         <div className="w-full h-screen bg-black">
-            <Canvas gl={{antialiasing:true}}  camera={{position:[8,12,16] ,cameraProps, zoom:10}}  >
+            <Canvas gl={{antialiasing:true}}  camera={{position:[8,12,16] ,near:0.1, far:1000, zoom:10}}  >
             <OrbitControls/>
         <Abstract/>
         <EffectComposer>
@@ -41,7 +41,7 @@ export default function App (){
             edgeThreshold={0.125} // Adjust the edge threshold as needed
             edgeThresholdMin={0.04} // Adjust the minimum edge threshold as needed
           />
-        <Bloom luminanceThreshold={0} luminanceSmoothing={0.2} height={300} />
+        <Bloom luminanceThreshold={0} luminanceSmoothing={0.2} height={700} />
        
       </EffectComposer>
 <AdaptivePixelRatio/>
