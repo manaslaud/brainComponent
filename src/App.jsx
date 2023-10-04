@@ -5,7 +5,7 @@ import { useThree } from "@react-three/fiber"
 import { useEffect } from "react"
 import { Bloom,  EffectComposer  } from '@react-three/postprocessing'
 import { SMAA, FXAA } from "@react-three/postprocessing";
-
+import Particle from "./Particle"
 
 
 export default function App (){
@@ -31,21 +31,10 @@ export default function App (){
   };
 
     return(
-        <div className="w-full h-screen bg-black">
-            <Canvas gl={{antialiasing:true}}  camera={{position:[8,12,16] ,near:0.1, far:1000, zoom:10}}  >
-            <OrbitControls/>
-        <Abstract/>
-        <EffectComposer>
-        <FXAA
-            consoleWarn={false} // Set this to true if you want to see warnings in the console
-            edgeThreshold={0.125} // Adjust the edge threshold as needed
-            edgeThresholdMin={0.04} // Adjust the minimum edge threshold as needed
-          />
-        <Bloom luminanceThreshold={0} luminanceSmoothing={0.2} height={700} />
-       
-      </EffectComposer>
-<AdaptivePixelRatio/>
-        </Canvas>
+        <div className="w-full h-screen bg-black relative">
+         
+            <h1 className=' top-[50%] text-white text-6xl absolute bg-red-200'>Manas</h1>
+          <Particle/>
         </div>
         
         
