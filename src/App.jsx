@@ -33,7 +33,7 @@ export default function App (){
     return(
         <div className="w-full h-screen bg-black relative">
          
-            <h1 className=' top-[50%] text-white text-6xl absolute bg-red-200'>Manas</h1>
+            <h1 className=' top-[50%] text-white text-6xl absolute bg-red-200'>Click to change </h1>
           <Particle/>
         </div>
         
